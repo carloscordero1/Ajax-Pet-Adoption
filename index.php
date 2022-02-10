@@ -44,6 +44,15 @@
 <script>
     $("document").ready(function(){
         
+      //hide likes and eats
+      $('#pet_likes').hide();
+      $('#pet_eats').hide();
+
+      //on click of feels, likes is shown
+      $('#pet_feels').click(function(){
+        
+      });
+
         
         $('#myForm').submit(function(e){
             e.preventDefault();//no need to submit as you'll be doing AJAX on this page
