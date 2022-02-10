@@ -50,7 +50,7 @@
 
       //on click of feels, likes is shown
       $('#pet_feels').click(function(){
-        
+        $('#pet_likes').slideDown(200);
       });
 
         
