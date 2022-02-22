@@ -8,16 +8,23 @@
        #myForm div{
         margin-bottom:2%;
         }
+          /*changes font and highlights the pet name */
+        .petName {
+          font-family: Verdana;
+          background-color: red;
+          font-size: 21px;
+        }
    </style>
    <script src="https://code.jquery.com/jquery-latest.js"></script>
    
 </head>
 <body>
 <h2>AJAX Pet Adoption Agency</h2>
-<p>Make some choices, and reveal your pet!!</p>
+<p>Make some choices, and reveal your pet!</p>
 <div id="output">
+<p>This page uses AJAX and jQuery. This website will prompt you 3 different questions and a textbox that asks the user to name their pet. There is a different pet for every combination! The questions appear one at a time, and the data is transmitted to a server-side page via AJAX.</p>
+<p>Get started below to choose your next pet!:</p>
 <form id="myForm" action="" method="get">
-
    <div id="pet_feels">
        <h3>Feels</h3>
        <p>Please choose how you would like your pet to feel:</p>
@@ -36,37 +43,97 @@
        <input type="radio" name="eats" value="carrots" required="required">carrots <br />
        <input type="radio" name="eats" value="pets">other people's pets <br />
    </div>
+    <div id="pet_name">
+       <h3>Name</h3>
+       <p>Please tell us what you want your pet to be called:</p>
+       <input type="text" name="petName" value="" placeholder="Name" required="required"> <br />
+   </div>
   
    <div><input type="submit" value="submit it!" /></div>
 </form>
 </div>
 <p><a href="index.php">RESET</a></p>
 <script>
+
     $("document").ready(function(){
         
-      //hide likes and eats
-      $('#pet_likes').hide();
-      $('#pet_eats').hide();
-
-      //on click of feels, likes is shown
-      $('#pet_feels').click(function(){
-        $('#pet_likes').slideDown(200);
-      });
-
+        //hide likes and eats
+        $('#pet_likes').hide();
+        $('#pet_eats').hide();
+        $('#pet_name').hide();
+        //on click of feels, likes is shown
+        $('#pet_feels').click(function(e){
+          $('#pet_likes').slideDown(200);
+        });
+        //on click of likes, eats is shown
+        $('#pet_likes').click(function(e){
+          $('#pet_eats').slideDown(200);
+        });
+        //on click of eats, name is shown
+        $('#pet_eats').click(function(e){
+          $('#pet_name').slideDown(200);
+        });
         
         $('#myForm').submit(function(e){
             e.preventDefault();//no need to submit as you'll be doing AJAX on this page
             let feels = $("input[name=feels]:checked").val();
             let likes = $("input[name=likes]:checked").val();
             let eats = $("input[name=eats]:checked").val();
+            let petName = 
+        $("input[name=petName]:contains()").val()
             let pet = "";
-            alert(feels);
+            var output = "";
+            if(feels == "fluffy" && likes == "petted" && eats == "pets"){
+            pet = "bad-dog";}
+            if(feels == "scaly" && likes == "petted" && eats == "pets"){
+              pet = "bird";}
+            if(feels == "scaly" && likes == "ridden" && eats == "carrots"){
+              pet = "cat";}
+            if(feels == "fluffy" && likes == "ridden" && eats == "carrots"){
+              pet = "dane";}
+            if(feels == "fluffy" && likes == "ridden" && eats == "pets"){
+              pet = "greyhound";}
+            if(feels == "scaly" && likes == "petted" && eats == "carrots"){
+              pet = "hedgehog";}
+            if(feels=="fluffy" && likes=="petted" && eats=="carrots"){
+              pet = "rabbit";}
+            if(feels=="scaly" && likes=="ridden" && eats=="pets"){
+              pet = "velociraptor";}
+            //alert(feels);
+            //this is the titleCase
+            petName = titleCase(petName);
+            //the span class is created here, so that we can refer to it in the <style> tag for css
+            output += `<p>A new addition to your family! You have a ${pet} as a new pet! Your pet's name is <span class="petName">${petName}</span>. </p> 
+            <p>Take care, we will miss ${petName}!</p>`
+            output += `<p>Congratulations! You have a new pet ${pet}.</p>`;
+            output += `<p>Your pet feels ${feels}.</p>`;
+            output += `<p>Your pet likes to be ${likes}.</p>`;
+            output += `<p>Your pet likes to eat ${eats}.</p>`;
+            output += `<p>Your pet is called ${petName}.</p>`;
+            //get data from server side page using AJAX
+            $.get( "includes/get_pet.php", { critter: pet } )
+            .done(function( data ) {
+            //alert( "Data Loaded: " + data );
+            $('#output').html(data + output);
+            })
+            .fail(function(xhr, status, error) {
+               //Ajax request failed.
+               var errorMessage = xhr.status + ': ' + xhr.statusText
+               alert('Error - ' + errorMessage);
+            });
+          
+    //titleCase function
+    function titleCase(str){
+      str = str.toLowerCase().split(' ');
+      for (var i = 0; i < str.length; i++) {
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+      }
+      return str.join(' ');
+    };
 
-
+            //lets output info about the pet to the page       
         });
-
     });
-
    </script>
 </body>
 </html>
